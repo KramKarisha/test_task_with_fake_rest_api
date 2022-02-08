@@ -1,25 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
+import {useEffect, useState} from "react";
+import {getLastUser} from "./api/getLastUser";
+import {createNewPost} from "./api/createNewPost";
+import {createNewComment} from "./api/createNewComment";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [status, setStatus] = useState('');
+
+    useEffect(() => {
+        const handler = async () => {
+            const lastUser = await getLastUser();
+            setStatus(JSON.stringify(lastUser))
+            const createdPost = await createNewPost(lastUser.id);
+            setStatus(JSON.stringify(createdPost))
+            const createdComment = await createNewComment(createdPost.id, lastUser.name, lastUser.email);
+            setStatus(JSON.stringify(createdComment))
+        }
+        handler();
+    },[])
+
+    return (
+        <div className="App">
+            TEST TASK WITH JSON PLACEHOLDER
+            <h1>CURRENT STATUS</h1>
+            <h2>{status}</h2>
+        </div>
+    );
 }
 
 export default App;
